@@ -55,12 +55,48 @@ class Match_model:
         conn.commit()
         conn.close()
 
+    def match_de_equipe(self , team_id):
+        conn  , cursor= self.databaseConnect.bd_connect()
+        query = """
+            SELECT m.match_adversaire , m.match_date , m.match_lieu
+            FROM EquipeMatch em
+            LEFT JOIN Match m ON em.match_id = m.match_id
+            WHERE em.team_id = ?
+        """
 
+        cursor.execute(query , (team_id,))
+        data = cursor.fetchall()
+        results = []
+        for datas in data :
+            adversaire_id , date_match , lieu_match = datas 
+            adversaire_nom=self.adversaire_nom(adversaire_id)
+            results.append((adversaire_nom, date_match, lieu_match))
+        conn.close()
+        return results 
+    
+    def Nombre_match_une_equipe(self , team_id):
+        conn  , cursor= self.databaseConnect.bd_connect()
+        query = """
+            SELECT
+                COUNT(em.match_id)
+            FROM
+                Equipe e
+            JOIN EquipeMatch em ON e.team_id = em.team_id
+            WHERE
+                e.team_id = ?
+        """
+
+        cursor.execute(query , (team_id,))
+        data = cursor.fetchall()
+        conn.close()
+        return data
     
 if __name__ == '__main__':
     matchs = Match_model()
-    adv_id = 3
-    dates = "19/12/2023"
-    lieu = "Stadium"
-    matchs.Match_add(adv_id , dates , lieu)
+    teamID = 1
+    
+
+    results = matchs.Nombre_match_une_equipe(teamID)
+
+    print(results)
         
