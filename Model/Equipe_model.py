@@ -72,6 +72,17 @@ class Equipe_model:
         conn.close()
         return data
     
+    def Equipe_add(self , team_name , logo , ligue_id):
+        conn , cursor = self.databaseConnect.bd_connect()
+        insert_query = """
+            INSERT INTO Equipe (team_name ,logo, ligue_id ) VALUES (? , ? , ?)
+        """
+        cursor.execute(insert_query , (team_name , logo , ligue_id,))
+        conn.commit()
+        conn.close()
+
+        
+    
 
     
 if __name__ == '__main__':
